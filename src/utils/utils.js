@@ -35,6 +35,24 @@ const white = new Colour({
   opacity: 1,
 });
 const red = new Colour({ hue: 0, saturation: 100, lightness: 50, opacity: 1 });
+const yellow = new Colour({
+  hue: 60,
+  saturation: 100,
+  lightness: 50,
+  opacity: 1,
+});
+const green = new Colour({
+  hue: 120,
+  saturation: 100,
+  lightness: 50,
+  opacity: 1,
+});
+const orange = new Colour({
+  hue: 30,
+  saturation: 100,
+  lightness: 50,
+  opacity: 1,
+});
 const blue = new Colour({
   hue: 240,
   saturation: 100,
@@ -47,6 +65,17 @@ const purple = new Colour({
   lightness: 50,
   opacity: 1,
 });
+
+const toColour = {
+  red,
+  orange,
+  yellow,
+  green,
+  blue,
+  purple,
+  black,
+  white,
+};
 
 class Canvas {
   constructor({ width, height, id }) {
@@ -457,13 +486,25 @@ class ComplexPolynomial {
               ? ''
               : index === 0
               ? coefficient
-              : `${coefficient !== 1 ? coefficient : ''}z${
-                  index !== 1 ? `^${index}` : ''
-                }`
+              : `${
+                  coefficient === -1
+                    ? '-'
+                    : coefficient === 1
+                    ? ''
+                    : coefficient
+                }z${index !== 1 ? `^${index}` : ''}`
           )
           .filter(notEqualTo(''))
           .toReversed()
-          .join(' + ');
+          .reduce(
+            (acc, term) =>
+              acc === ''
+                ? term
+                : term[0] === '-'
+                ? `${acc} - ${term.slice(1)}`
+                : `${acc} + ${term}`,
+            ''
+          );
   }
 }
 
@@ -754,5 +795,9 @@ export {
   red,
   blue,
   purple,
+  yellow,
+  green,
+  orange,
+  toColour,
   mod,
 };
