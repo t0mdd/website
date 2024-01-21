@@ -1,11 +1,4 @@
-import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
-import { Point } from '../utils/utils';
+import { forwardRef, useImperativeHandle, useRef } from 'react';
 
 export default forwardRef(({ width, height, style }, ref) => {
   const canvasRef = useRef();

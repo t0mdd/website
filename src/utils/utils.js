@@ -691,7 +691,6 @@ class OrientedLineSegment {
     let perpUnitVector = segmentVector
       .scale(1 / segmentVector.length)
       .rotateAboutOrigin(Math.PI / 2);
-
     if (
       !this.containingLine.sameSide(this.startPoint.plus(perpUnitVector), opp)
     )

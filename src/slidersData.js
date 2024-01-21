@@ -1,12 +1,5 @@
 const broccoliSliders = ({ maxDepth, initialWidth, initialHeight }) => [
   {
-    id: 'depth',
-    labelText: 'Depth:',
-    min: 1,
-    max: maxDepth,
-    initialValue: 11,
-  },
-  {
     id: 'heightDecay',
     labelText: 'Height Decay',
     min: 300,
@@ -17,7 +10,7 @@ const broccoliSliders = ({ maxDepth, initialWidth, initialHeight }) => [
   {
     id: 'baseStartBaryCoord',
     labelText: 'Base start',
-    min: 0,
+    min: 1 / 1000,
     max: 1 - 1 / 1000,
     step: 1 / 1000,
     initialValue: 0.445,
@@ -25,7 +18,7 @@ const broccoliSliders = ({ maxDepth, initialWidth, initialHeight }) => [
   {
     id: 'baseEndBaryCoord',
     labelText: 'Base end',
-    min: 0,
+    min: 1 / 1000,
     max: 1 - 1 / 1000,
     step: 1 / 1000,
     initialValue: 0.961,
@@ -37,6 +30,13 @@ const broccoliSliders = ({ maxDepth, initialWidth, initialHeight }) => [
     step: 1 / 1000,
     max: 1,
     initialValue: 0.637,
+  },
+  {
+    id: 'depth',
+    labelText: 'Depth:',
+    min: 1,
+    max: maxDepth,
+    initialValue: 11,
   },
   // {
   //   id: 'initialHue',
@@ -106,20 +106,20 @@ const complexPolynomialSliders = [
     initialValue: 1,
   },
   {
-    id: 'maxDomainRadius',
-    labelText: 'Max domain radius',
-    min: 0,
-    max: 10,
-    step: 1 / 100,
-    initialValue: 3,
-  },
-  {
     id: 'thickness',
     labelText: 'Thickness',
     min: 1,
     max: 10,
     step: 1,
     initialValue: 2,
+  },
+  {
+    id: 'maxDomainRadius',
+    labelText: 'Max domain radius',
+    min: 0,
+    max: 10,
+    step: 1 / 100,
+    initialValue: 3,
   },
 ];
 
