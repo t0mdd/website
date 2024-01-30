@@ -1,6 +1,7 @@
 import { forwardRef, useImperativeHandle, useRef } from 'react';
+import { Point } from '../utils/utils';
 
-export default forwardRef(({ width, height, style }, ref) => {
+export default forwardRef(({ width, height, ...otherProps }, ref) => {
   const canvasRef = useRef();
 
   useImperativeHandle(ref, () => ({
@@ -10,14 +11,21 @@ export default forwardRef(({ width, height, style }, ref) => {
     draw(drawInstructions) {
       return drawInstructions(canvasRef.current.getContext('2d'));
     },
+    relativeMouseCoordinates({ clientX, clientY }) {
+      const { left, top } = canvasRef.current.getBoundingClientRect();
+      return new Point(clientX - left, clientY - top);
+    },
+    setStyle(key, value) {
+      canvasRef.current.style[key] = value;
+    },
   }));
 
   return (
     <canvas
       width={width}
       height={height}
-      style={style}
       ref={canvasRef}
+      {...otherProps}
     ></canvas>
   );
 });

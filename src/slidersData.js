@@ -1,4 +1,9 @@
-const broccoliSliders = ({ maxDepth, initialWidth, initialHeight }) => [
+const broccoliSliders = ({
+  maxDepth,
+  quadMode,
+  initialWidth,
+  initialHeight,
+}) => [
   {
     id: 'heightDecay',
     labelText: 'Height Decay',
@@ -6,6 +11,15 @@ const broccoliSliders = ({ maxDepth, initialWidth, initialHeight }) => [
     max: 1000 - 1,
     initialValue: 463,
     valueProcessor: d => 1 - d / 1000,
+  },
+  {
+    id: 'heightDecay2',
+    labelText: 'Height Decay 2',
+    min: 300,
+    max: 1000 - 1,
+    initialValue: 463,
+    valueProcessor: d => 1 - d / 1000,
+    hidden: !quadMode,
   },
   {
     id: 'baseStartBaryCoord',
@@ -22,21 +36,34 @@ const broccoliSliders = ({ maxDepth, initialWidth, initialHeight }) => [
     max: 1 - 1 / 1000,
     step: 1 / 1000,
     initialValue: 0.961,
+    // if it is equal to baseStartBaryCoord it causes problems when calculating perpendicular to degenerate side
+    valueProcessor: x => x + 10e-5,
   },
   {
     id: 'baseRatio',
     labelText: 'Altitude skew',
-    min: 0,
+    min: 1 / 1000,
+    step: 1 / 1000,
+    max: 1,
+    initialValue: 1 / 3,
+  },
+  {
+    id: 'baseRatio2',
+    labelText: 'Altitude skew 2',
+    min: 1 / 1000,
     step: 1 / 1000,
     max: 1,
     initialValue: 0.637,
+    // if it is equal to baseRatio it causes problems when calculating perpendicular to degenerate side
+    valueProcessor: x => x + 10e-5,
+    hidden: !quadMode,
   },
   {
     id: 'depth',
     labelText: 'Depth:',
     min: 1,
     max: maxDepth,
-    initialValue: 11,
+    initialValue: 5,
   },
   // {
   //   id: 'initialHue',

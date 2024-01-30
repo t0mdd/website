@@ -232,11 +232,12 @@ class OrientedPolygon {
     return this.sides.map(side => side.length);
   }
 
+  // angles[i] = angle at corner i
   get angles() {
     let s = this.sides;
     let n = this.numberOfCorners;
     return s.map((side, index) =>
-      side.angleBetween(s[(index + n - 1) % n].reverse)
+      side.angleBetween(s[(index - 1 + n) % n].reverse)
     );
   }
 
@@ -542,6 +543,9 @@ class Point {
   dot({ x, y }) {
     return this.x * x + this.y * y;
   }
+  det({ x, y }) {
+    return this.x * y - this.y * x;
+  }
   equals({ x, y }) {
     return this.x === x && this.y === y;
   }
@@ -556,6 +560,9 @@ class Point {
   }
   angleBetween(otherPoint) {
     return Math.acos(this.dot(otherPoint) / (this.length * otherPoint.length));
+  }
+  directedAngleBetween(otherPoint) {
+    return Math.atan2(this.det(otherPoint), this.dot(otherPoint));
   }
   between(p, q) {
     return almostEqual(
@@ -687,6 +694,10 @@ class OrientedLineSegment {
     else return false;
   }
   perpUnitVectorOpposite(opp) {
+    if (this.directionVector.length === 0)
+      console.error(
+        `perpUnitVectorOpposite called on zero length line segment: ${this.print}`
+      );
     const segmentVector = this.directionVector;
     let perpUnitVector = segmentVector
       .scale(1 / segmentVector.length)
@@ -705,15 +716,32 @@ class OrientedLineSegment {
     return this.baryPoint(0.5);
   }
   angleBetween(otherSegment) {
-    try {
-      if (!this.startPoint.equals(otherSegment.startPoint))
-        throw 'SEGMENTS NOT BASED AT THE SAME POINT';
-    } catch (err) {
-      console.error(
-        err + ': ' + this.print + '.angleBetween(' + otherSegment.print + ')'
+    // try {
+    if (!this.startPoint.equals(otherSegment.startPoint))
+      console.log(
+        `SEGMENTS NOT BASED AT THE SAME POINT: ${this.print}.angleBetween(${otherSegment.print})`
       );
-    }
+    // } catch (err) {
+    //   console.error(
+    //     err + ': ' + this.print + '.angleBetween(' + otherSegment.print + ')'
+    //   );
+    // }
     return this.directionVector.angleBetween(otherSegment.directionVector);
+  }
+  directedAngleBetween(otherSegment) {
+    // try {
+    if (!this.startPoint.equals(otherSegment.startPoint))
+      console.log(
+        `SEGMENTS NOT BASED AT THE SAME POINT: ${this.print}.angleBetween(${otherSegment.print})`
+      );
+    // } catch (err) {
+    //   console.error(
+    //     err + ': ' + this.print + '.angleBetween(' + otherSegment.print + ')'
+    //   );
+    // }
+    return this.directionVector.directedAngleBetween(
+      otherSegment.directionVector
+    );
   }
   drawInstructions({ colour = black, thickness = 1 }) {
     return context => {
