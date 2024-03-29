@@ -1,20 +1,41 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { complexPolynomialSliders } from '../slidersData';
-import * as R from 'ramda';
-import {
-  ComplexPolynomial,
-  OrientedLineSegment,
-  Point,
-  mod,
-  toColour,
-  white,
-} from '../utils/utils';
+import { assoc, complement, identity, range, zip } from 'ramda';
 import Canvas from '../components/Canvas';
+import { ComplexPolynomial, Point } from '../utils/math';
+import { OrientedLineSegment } from '../utils/shapes';
+import { toColour } from '../utils/colours';
+import { mod } from 'mathjs';
+import { rotateLeft } from '../utils/arrays';
 
 const initialWidth = 500;
 const initialHeight = 500;
 
-const fractalSlidersData = complexPolynomialSliders;
+const fractalSlidersData = [
+  {
+    id: 'speed',
+    labelText: 'Speed',
+    min: 0,
+    max: 5,
+    step: 1 / 100,
+    initialValue: 1 / 3,
+  },
+  {
+    id: 'thickness',
+    labelText: 'Thickness',
+    min: 1,
+    max: 10,
+    step: 1,
+    initialValue: 2,
+  },
+  {
+    id: 'maxDomainRadius',
+    labelText: 'Max domain radius',
+    min: 0,
+    max: 10,
+    step: 1 / 100,
+    initialValue: 3,
+  },
+];
 
 const initialSliderValues = Object.fromEntries(
   fractalSlidersData.map(({ id, initialValue }) => [id, initialValue])
@@ -36,27 +57,16 @@ const Homotopy = () => {
     ])
   );
 
-  const handleSliderChange =
-    id =>
-    ({ target: { value } }) =>
-      setUnprocessedSliderValues(R.assoc(id, value));
-
   const canvasRef = useRef();
 
   const [coefficientsString, setCoefficientsString] =
     useState('1 1 1 1 -1 1 -1');
 
-  const handleCoefficientsStringChange = ({ target: { value } }) => {
-    if (value.trimStart().split(/\s+/g).length >= 10) return;
-    canvasRef.current.clear();
-    setCoefficientsString(value);
-  };
-
   const coefficients = coefficientsString
     .trim()
     .split(/\s+/g)
     .map(coeffientString => +coeffientString)
-    .filter(R.complement(isNaN));
+    .filter(complement(isNaN));
 
   const polynomial = new ComplexPolynomial(
     // ...R.range(0, 5).map(_ => Math.random())
@@ -74,13 +84,10 @@ const Homotopy = () => {
     'black purple blue red white'
   );
 
-  const handleColourSchemeStringChange = ({ target: { value } }) =>
-    setColourSchemeString(value);
-
   const requestRef = useRef();
 
   const samplePointsOfCircle = ({ radius, numberOfSamples }) =>
-    R.range(0, numberOfSamples).map(i =>
+    range(0, numberOfSamples).map(i =>
       Point.fromPolarCoordinates({
         r: radius,
         theta: (2 * Math.PI * i) / numberOfSamples,
@@ -142,7 +149,7 @@ const Homotopy = () => {
       { xMax: 0, yMax: 0 }
     );
     const canvasBound = max(xMax, yMax);
-    return R.zip(samplePoints, [...samplePoints.slice(1), samplePoints[0]]).map(
+    return zip(samplePoints, rotateLeft(1, samplePoints)).map(
       ([start, end]) => {
         return new OrientedLineSegment(
           // normalizePointForCanvas({ xMax, yMax, xMin, yMin })(f(start)),
@@ -177,7 +184,7 @@ const Homotopy = () => {
     .trim()
     .split(/\s+/g)
     .map(colour => toColour[colour])
-    .filter(R.identity);
+    .filter(identity);
 
   // useEffect(() => {
   //   if (canvasRef.current === undefined) return;
@@ -280,11 +287,9 @@ const Homotopy = () => {
     return () => cancelAnimationFrame(requestRef.current);
   }, [processedSliderValues]);
 
-  const clearCanvas = () => canvasRef.current?.clear();
-
   return (
     <div className='App'>
-      <h1>???????</h1>
+      <h1>HOMOTOPY</h1>
 
       <main>
         <div>
@@ -302,7 +307,11 @@ const Homotopy = () => {
             <input
               id='coefficientsInput'
               value={coefficientsString}
-              onChange={handleCoefficientsStringChange}
+              onChange={({ target: { value } }) => {
+                if (value.trimStart().split(/\s+/g).length >= 10) return;
+                canvasRef.current.clear();
+                setCoefficientsString(value);
+              }}
             />
           </label>
           <label htmlFor='colourSchemeInput'>
@@ -310,7 +319,7 @@ const Homotopy = () => {
             <input
               id='colourSchemeInput'
               value={colourSchemeString}
-              onChange={handleColourSchemeStringChange}
+              onChange={({ target: { value } }) => setColourSchemeString(value)}
             />
           </label>
           <div className='slider-panel'>
@@ -323,12 +332,14 @@ const Homotopy = () => {
                   max={max}
                   step={step}
                   value={unprocessedSliderValues[id]}
-                  onChange={handleSliderChange(id)}
+                  onChange={({ target: { value } }) =>
+                    setUnprocessedSliderValues(assoc(id, value))
+                  }
                 />
               </Fragment>
             ))}
           </div>
-          <button onClick={clearCanvas}>Clear</button>
+          <button onClick={() => canvasRef.current?.clear()}>Clear</button>
         </div>
       </main>
     </div>

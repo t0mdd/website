@@ -9,7 +9,10 @@ const Header = () => (
           <Link to='/darkbroccoli'>DARKBROCCOLI</Link>
         </li>
         <li>
-          <Link to='/homotopy'>???????</Link>
+          <Link to='/homotopy'>HOMOTOPY</Link>
+        </li>
+        <li>
+          <Link to='/barycentricSplit'>SPLIT</Link>
         </li>
       </ul>
     </nav>

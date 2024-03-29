@@ -1,5 +1,5 @@
 import { forwardRef, useImperativeHandle, useRef } from 'react';
-import { Point } from '../utils/utils';
+import { Point } from '../utils/math';
 
 export default forwardRef(({ width, height, ...otherProps }, ref) => {
   const canvasRef = useRef();
